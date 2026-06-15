@@ -14,13 +14,28 @@ export const shuffleAnswers = (question) => {
 };
 
 export const normalizeQuestions = (backendQuestions) => {
-  return backendQuestions.map((backendQuestion) => {
-    const incorrectAnswers = backendQuestion.incorrect_answers.map(
-      (incorrectAnswer) => decodeURIComponent(incorrectAnswer)
-    );
+  const questionsArray = Array.isArray(backendQuestions) ? backendQuestions : [];
+  return questionsArray.map((backendQuestion) => {
+    const hasApiFormat = Array.isArray(backendQuestion.incorrect_answers);
+    const incorrectAnswers = hasApiFormat
+      ? backendQuestion.incorrect_answers.map((incorrectAnswer) =>
+          decodeURIComponent(incorrectAnswer)
+        )
+      : Array.isArray(backendQuestion.incorrectAnswers)
+      ? backendQuestion.incorrectAnswers
+      : [];
+
+    const correctAnswer = hasApiFormat
+      ? decodeURIComponent(backendQuestion.correct_answer || "")
+      : backendQuestion.correctAnswer || "";
+
+    const question = hasApiFormat
+      ? decodeURIComponent(backendQuestion.question || "")
+      : backendQuestion.question || "";
+
     return {
-      correctAnswer: decodeURIComponent(backendQuestion.correct_answer),
-      question: decodeURIComponent(backendQuestion.question),
+      correctAnswer,
+      question,
       incorrectAnswers,
     };
   });

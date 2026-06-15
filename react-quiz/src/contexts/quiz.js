@@ -46,10 +46,13 @@ const reducer = (state, action) => {
     }
     case "LOADED_QUESTIONS": {
       const normalizedQuestions = normalizeQuestions(action.payload);
+      const answers = normalizedQuestions.length
+        ? shuffleAnswers(normalizedQuestions[0])
+        : [];
       return {
         ...state,
         questions: normalizedQuestions,
-        answers: shuffleAnswers(normalizedQuestions[0]),
+        answers,
       };
     }
     default: {

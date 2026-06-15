@@ -1,29 +1,24 @@
 import { useContext, useEffect } from "react";
 import Question from "./Question";
 import { QuizContext } from "../contexts/quiz";
+import quizData from "../data";
 
 const Quiz = () => {
   const [quizState, dispatch] = useContext(QuizContext);
-  const apiUrl =
-    "https://opentdb.com/api.php?amount=10&category=31&difficulty=easy&type=multiple&encode=url3986";
 
   useEffect(() => {
     if (quizState.questions.length > 0) {
       return;
     }
-    console.log("on initialize");
 
-    fetch(apiUrl)
-      .then((res) => res.json())
-      .then((data) => {
-        console.log("data", data);
-        dispatch({ type: "LOADED_QUESTIONS", payload: data.results });
-      });
-  });
+    dispatch({ type: "LOADED_QUESTIONS", payload: quizData });
+  }, [quizState.questions.length, dispatch]);
 
   return (
     <div className="quiz">
-      {quizState.showResults && (
+      {quizState.questions.length === 0 && !quizState.showResults ? (
+        <div className="loading">Loading questions…</div>
+      ) : quizState.showResults && (
         <div className="results">
           <div className="congratulations">Congratulations</div>
           <div className="results-info">
